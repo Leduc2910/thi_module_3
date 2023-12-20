@@ -32,6 +32,7 @@ public class StudentController extends HttpServlet {
             case "delete":
                 showFormDelete(req, resp);
                 break;
+
         }
     }
 
@@ -85,7 +86,20 @@ public class StudentController extends HttpServlet {
             case "delete":
                 deleteStudent(req, resp);
                 break;
+            case "search":
+                searchByName(req, resp);
+                break;
         }
+    }
+
+    private void searchByName(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String name = req.getParameter("nameSearch");
+        List<Student> students = studentService.findByName(name);
+        List<Classroom> classrooms = classroomService.findAll();
+        req.setAttribute("lstStudent", students);
+        req.setAttribute("lstClassroom", classrooms);
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("student/index.jsp");
+        requestDispatcher.forward(req, resp);
     }
 
     private void deleteStudent(HttpServletRequest req, HttpServletResponse resp) throws IOException {

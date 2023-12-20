@@ -21,7 +21,12 @@
                 Add
             </button>
         </div>
-        <div class="search"></div>
+        <div class="search">
+            <form class="form-inline" method="post" action="/student?action=search">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="nameSearch">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
     </div>
 </div>
 <table class="table table-striped">

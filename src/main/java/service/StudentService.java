@@ -13,6 +13,7 @@ import java.util.List;
 
 public class StudentService implements IStudentService<Student> {
     private Connection connection = ConnectToMySQL.getConnection();
+
     @Override
     public void add(Student student) {
         String sql = "insert into student(name, DOB, email, address, phone, classID) values (?, ?, ?, ?, ?, ?);";
@@ -64,6 +65,31 @@ public class StudentService implements IStudentService<Student> {
     public List<Student> findAll() {
         List<Student> students = new ArrayList<>();
         String sql = "select student.*, c.name as nameClassroom from student join classroom c on c.id = student.classID order by student.id;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String DOB = resultSet.getString("DOB");
+                String email = resultSet.getString("email");
+                String address = resultSet.getString("address");
+                String phone = resultSet.getString("phone");
+                int classID = resultSet.getInt("classID");
+                String nameClassroom = resultSet.getString("nameClassroom");
+                Classroom classroom = new Classroom(classID, nameClassroom);
+                Student student = new Student(id, name, DOB, email, address, phone, classroom);
+                students.add(student);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return students;
+    }
+
+    public List<Student> findByName(String nameSearch) {
+        List<Student> students = new ArrayList<>();
+        String sql = "select student.*, c.name as nameClassroom from student join classroom c on c.id = student.classID WHERE student.name LIKE '%" + nameSearch + "%'  order by student.id;";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
